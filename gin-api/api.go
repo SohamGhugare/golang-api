@@ -31,11 +31,13 @@ var albums = []album{
 }
 
 func main() {
+	fmt.Println("Starting the API...")
 	// Initiating the router
 	router := gin.Default()
 
 	// Registering all endpoints
 	router.GET("/albums", getAlbums)
+	router.POST("/albums", postAlbums)
 
 	// Running the API
 	router.Run("localhost:8080")
@@ -44,4 +46,18 @@ func main() {
 // getAlbums function that responds with a list of all albums as JSON
 func getAlbums(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, albums)
+}
+
+// postAlbums function that adds an album from received JSON
+func postAlbums(c *gin.Context) {
+	var newAlbum album
+
+	// Binding the received JSON to the album struct
+	if err := c.BindJSON(&newAlbum); err != nil {
+		return
+	}
+
+	albums = append(albums, newAlbum)
+	c.IndentedJSON(http.StatusCreated, newAlbum)
+
 }
